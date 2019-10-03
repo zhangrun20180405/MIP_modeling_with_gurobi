@@ -24,25 +24,25 @@ import warnings
 import scipy.stats as stats   
 from random import randrange
 from random import choices
-z_lower_with_SI_1 = np.array([32,32,0])
-z_lower_with_SI_2 = np.array([50,50,50])
-z_lower_with_SI_3 = np.array([19,19,0])
-z_lower_with_SI_4 = np.array([ 66,66,28])
-z_lower_with_SI_5 = np.array([ 48,48,48])
+z_lower_with_SI_1 = np.array([0,0,0])
+z_lower_with_SI_2 = np.array([0,0,0])
+z_lower_with_SI_3 = np.array([1,1,0])
+z_lower_with_SI_4 = np.array([ 6,6,2])
+z_lower_with_SI_5 = np.array([ 4,4,4])
 
-z_upper_with_SI_1 = np.array([1864,1864,1864])        
-z_upper_with_SI_2 = np.array([1528,1528,1528])
-z_upper_with_SI_3 = np.array([3876,3876,4968])
-z_upper_with_SI_4 = np.array([1307,3107,1307])
-z_upper_with_SI_5 = np.array([1804,1804,804])
+z_upper_with_SI_1 = np.array([14,14,14])        
+z_upper_with_SI_2 = np.array([18,18,18])
+z_upper_with_SI_3 = np.array([36,36,48])
+z_upper_with_SI_4 = np.array([17,17,17])
+z_upper_with_SI_5 = np.array([18,18,18])
 
 
 
-z_mean_with_SI_1 = np.array ([647,678,482])
-z_mean_with_SI_2 = np.array ([518,518,518])
-z_mean_with_SI_3 = np.array ([1381,1497,1230])
-z_mean_with_SI_4 = np.array ([237,257,167])
-z_mean_with_SI_5 = np.array ([526,550,506])
+z_mean_with_SI_1 = np.array ([7,7,8])
+z_mean_with_SI_2 = np.array ([8,8,8])
+z_mean_with_SI_3 = np.array ([8,7,10])
+z_mean_with_SI_4 = np.array ([7,7,7])
+z_mean_with_SI_5 = np.array ([6,5,6])
 
 
 def fun_create_data_with_ThetaAndLabel(Theta,z_lower,z_upper,z_mean,SI_lable):
