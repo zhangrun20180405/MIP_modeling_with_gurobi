@@ -1,0 +1,11 @@
+import matplotlib.pyplot as plt
+import numpy as np
+dg=pd.DataFrame(data)
+
+fig=plt.figure()
+bin1=np.linspace(100,1750,500)
+plt.hist(dg[1].tolist(), bin1,facecolor="white", edgecolor="black",alpha=1, label = "K=1")
+plt.hist(dg[2].tolist(), bin1,facecolor="white", edgecolor="blue",alpha=1, label = "K=1")
+plt.hist(dg[3].tolist(), bin1,facecolor="white", edgecolor="red",alpha=1, label = "K=1")
+
+plt.grid(linestyle='--',linewidth=0.45)
