@@ -1,0 +1,111 @@
+import math
+import datetime
+import pickle
+import time
+import numpy as np
+import pandas as pd
+import scipy.stats as stats
+import random as random
+
+random.seed(12111122343)
+np.random.seed(1130112243)
+
+random
+import os
+import datetime
+import pickle
+import time
+import xlsxwriter
+from math import *
+from numpy import *
+from gurobipy import *
+from openpyxl import load_workbook
+import warnings
+import scipy.stats as stats   
+from random import randrange
+from random import choices
+z_lower_with_SI_1 = np.array([32,32,0])
+z_lower_with_SI_2 = np.array([50,50,50])
+z_lower_with_SI_3 = np.array([19,19,0])
+z_lower_with_SI_4 = np.array([ 66,66,28])
+z_lower_with_SI_5 = np.array([ 48,48,48])
+
+z_upper_with_SI_1 = np.array([1864,1864,1864])        
+z_upper_with_SI_2 = np.array([1528,1528,1528])
+z_upper_with_SI_3 = np.array([3876,3876,4968])
+z_upper_with_SI_4 = np.array([1307,3107,1307])
+z_upper_with_SI_5 = np.array([1804,1804,804])
+
+
+
+z_mean_with_SI_1 = np.array ([647,678,482])
+z_mean_with_SI_2 = np.array ([518,518,518])
+z_mean_with_SI_3 = np.array ([1381,1497,1230])
+z_mean_with_SI_4 = np.array ([237,257,167])
+z_mean_with_SI_5 = np.array ([526,550,506])
+
+
+def fun_create_data_with_ThetaAndLabel(Theta,z_lower,z_upper,z_mean,SI_lable):
+
+    n_samples = 20000
+    #sigma=11
+    #sigma=1.1
+    #sigma=3.3451
+    #sigma=4.8333
+    #sigma=9.6274 # alomost the upper bound that make sure model feasible
+    #sigma=9.6004
+    sigma=6
+    norm_dist = []
+    z = np.empty([12, n_samples, len(z_mean)])
+    z_label=np.empty([1,n_samples,len(z_mean)+1])
+
+    for i in range(len(z_mean)):
+        dist = stats.truncnorm((z_lower[i] - z_mean[i]) / sigma, (z_upper[i] - z_mean[i]) / sigma, loc=z_mean[i], scale=sigma)
+        z[0, :, i] = dist.rvs(n_samples)
+        # 基于上一轮 z[n] 数据的均值和协方差矩阵创立的下一个 z[n+1]轮数据
+    for n in range(10):
+
+        randomnumber=random.random()*random.random()
+        norm_dist.append((np.mean(z[n], axis=0)+Theta*randomnumber, np.cov(z[n], rowvar=0)))
+        #print("random number in this case stage z["+str(n)+"],is"+ str(randomnumber) )
+        #recurrent_backup.append(randomnumber)
+        z[n+1] = np.random.multivariate_normal(norm_dist[n][0], norm_dist[n][1],n_samples)
+    for n in range(10):
+
+        internal_label=np.full([n_samples//10,1],SI_lable).tolist()
+        #print(shape(internal_label))
+        #print(shape(np.random.multivariate_normal(norm_dist[n][0], norm_dist[n][1],n_samples//10)))
+        b=np.random.multivariate_normal(norm_dist[n][0], norm_dist[n][1],n_samples//2)
+        b=b.tolist()
+        for i in range(len(z_mean)):
+            b = np.array(b)
+            b = [t for t in b if t[i] >= z_lower[i] and t[i] <= z_upper[i]]
+        index_list=[]
+        for x in range(len(b)):        
+            index_list.append(x) 
+        c=choices(index_list,k=n_samples//10)
+        d=[]
+        for x in range(len(c)):            
+            d.append(b[c[x]].tolist())
+       
+        for x in d:
+            x.insert(0,int(SI_lable))
+        #print(shape(b))
+        z_label[0, (n * n_samples // 10):(n * n_samples // 10 + n_samples //10)] =np.array(d)
+        #print(shape(z_label[0]))
+        
+    return z_label[0]
+    
+    
+
+set_offset=13.2358
+data1=fun_create_data_with_ThetaAndLabel(set_offset,z_lower_with_SI_1,z_upper_with_SI_1,z_mean_with_SI_1,0)
+data2=fun_create_data_with_ThetaAndLabel(set_offset,z_lower_with_SI_2,z_upper_with_SI_2,z_mean_with_SI_2,1)
+data3=fun_create_data_with_ThetaAndLabel(set_offset,z_lower_with_SI_3,z_upper_with_SI_3,z_mean_with_SI_3,2)
+data4=fun_create_data_with_ThetaAndLabel(set_offset,z_lower_with_SI_4,z_upper_with_SI_4,z_mean_with_SI_4,3)
+data5=fun_create_data_with_ThetaAndLabel(set_offset,z_lower_with_SI_5,z_upper_with_SI_5,z_mean_with_SI_5,4)
+
+data6=np.concatenate([data1,data2],axis=0)
+data7=np.concatenate([data3,data4],axis=0)
+data8=np.concatenate([data6,data7],axis=0)
+data=np.concatenate([data8,data5],axis=0)
