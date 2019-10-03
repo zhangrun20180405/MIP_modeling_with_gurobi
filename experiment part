@@ -1,0 +1,23 @@
+import pandas as pd
+
+
+dfdata=pd.DataFrame(D_label)
+dfdata[0]=df[0].astype('int')
+mu=real_case_fun_data_M_i_cluster_to_tuple_mu(dfdata,l,N,M_i,T_ij)
+D_label=data_with_sideinformation_label
+D_lable=np.random.shuffle(D_label)
+v_ijk=real_case_fun_nu(D_label,N,M_i,l)
+p_D=p_k(D_label,l)
+mu_without_k=v_ijk
+mu_lb= tuple_data_with_deta_for_all(mu_without_k,-50)
+mu_ub= tuple_data_with_deta_for_all(mu_without_k,50)
+sigma=real_case_fun_data_M_i_cluster_to_tuple_sigma(D_label,N,M_i,l)
+for epsilon_set in epsilon_set_List:
+    epsilon=fun_epsilon(N,M_i,l,epsilon_set)
+    for R_0 in R_0_List:
+        for D_L in D_L_List:
+       
+                x_dict,cost_p3=model_DRO_Proposition_3_cv(R_0,D_L,mu,mu_lb,mu_ub,v_ijk,sigma,l,p_D)  # Second output
+                cost_p3=round(cost_p3,1)
+                x=dic_x_to_tuple_x(x_dict,N,M_i,T_ij)
+                print("system epsilon is %s , L_s is %s, R_0 is %s, cost is %s  and optimal design is    %s "%(epsilon_set,D_L,R_0,cost_p3,x))
