@@ -1,0 +1,460 @@
+def model_DRO_Proposition_3_cv(R_0,D_L,mu,mu_lb,mu_ub,v_ijk,sigma,K,p):
+    
+    
+    m=Model("DRO-P2")
+
+    # variable alpha（1）
+    # variable alpha（1）
+    alpha={}
+    for i in range(N):
+        #print(i)
+        for j in range(M_i[i]):
+            #print(j)
+            for t in range(T_ij[i][j]):
+                for k in range(K):
+                    alpha[i,j,t,k]=m.addVar(lb=-GRB.INFINITY, ub=0,vtype=GRB.CONTINUOUS,name="alpha_%s_%s_%s_%s"%(i,j,t,k))   
+    
+    #variabel q_m（2）
+    q_m={}
+    for l in range(N):
+        #print(l)
+        #for j in range(M_i_a[l]):
+        for j in range(M_i_a[l]):
+            #print(j)
+            for t in range(T_ij_a[l][j]):
+                for k in range(K):
+                    q_m[l,j,t,k]=m.addVar(lb=-GRB.INFINITY, ub=0,vtype=GRB.CONTINUOUS,name="q_m_%s_%s_%s_%s"%(l,j,t,k))
+    
+    # variable p_m（3）
+    #p_m=m.addVars(N,K,lb=-GRB.INFINITY, ub=0,vtype=GRB.CONTINUOUS,name="p_m")
+    
+    # variable psi（4）
+    psi=m.addVars(N,K,K,lb=-GRB.INFINITY, ub=0,vtype=GRB.CONTINUOUS,name="psi")                 # psi
+    
+    #variabel phi（5）
+    phi={}
+    for l in range(N):
+        for i in range(N):
+            #for j in range(M_i_a[l]):
+            for j in range(M_i[i]):
+                for t in range(T_ij[i][j]):
+                    for k in range(K):
+                        phi[l,i,j,t,k]=m.addVar(lb=0, ub=+GRB.INFINITY,vtype=GRB.CONTINUOUS,name="phi_%s_%s_%s_%s_%s"%(l,i,j,t,k))
+    
+    # variabel varsigma（6）
+    
+    varsigma=m.addVars(K,K,lb=-GRB.INFINITY, ub=0,vtype=GRB.CONTINUOUS,name="varsigma")
+    
+    # variabe rho（7）
+    rho={}
+    for i in range(N):
+        for j in range(M_i[i]):
+            for t in range(T_ij[i][j]):
+                for k in range(K):
+                    rho[i,j,t,k]=m.addVar(lb=0, ub=+GRB.INFINITY,vtype=GRB.CONTINUOUS,name="rho_%s_%s_%s_%s"% (i,j,t,k))
+    
+                    
+    # variable tau（8）
+    tau=m.addVars(K,lb=-GRB.INFINITY, ub=+GRB.INFINITY,vtype=GRB.CONTINUOUS,name="tau")
+    
+    
+    # variable beta（9）
+    beta={}
+    for i in range(N):
+       # print(i)
+        for j in range(M_i[i]):
+            #print(j)
+            for t in range(T_ij[i][j]):
+                for k in range(K):    
+                    beta[i,j,t,k]=m.addVar(lb=0,ub=+GRB.INFINITY,vtype=GRB.CONTINUOUS,name="beta_%s_%s_%s_%s" % (i,j,t,k))
+    
+    # variance lam（10）
+    lam={}
+    for i in range(N):
+        for j in range(M_i[i]):
+            for k in range(K):
+                lam[i,j,k]=m.addVar(lb=0, ub=+GRB.INFINITY,vtype=GRB.CONTINUOUS,name="lam_%s_%s_%s" % (i,j,k))
+    
+    # variable varphi（11）
+    varphi={}
+    for l in range(N):
+        for i in range(N):
+            #for j in range(M_i_a[l]):
+            for j in range(M_i[i]):
+                for t in range(T_ij[i][j]):
+                    for k in range(K):
+                        varphi[l,i,j,t,k]=m.addVar(lb=-GRB.INFINITY, ub=0,vtype=GRB.CONTINUOUS,name="varphi_%s_%s_%s_%s_%s"%(l,i,j,t,k))
+    
+    #variable varrho（12）
+    varrho={}
+    for i in range(N):
+        for j in range(M_i[i]):
+            for t in range(T_ij[i][j]):
+                for k in range(K):
+                    varrho[i,j,t,k]=m.addVar(lb=-GRB.INFINITY, ub=0,vtype=GRB.CONTINUOUS,name="varrho_%s_%s_%s_%s"% (i,j,t,k))
+    
+    
+    # variable varrho (13)
+    pi={}
+    for l in range(N):
+        for i in range(N):
+            #for j in range(M_i_a[l]):
+            for j in range(M_i[i]):
+                for t in range(T_ij[i][j]):
+                    for k in range(K):
+                        pi[l,i,j,t,k]=m.addVar(lb=0, ub=+GRB.INFINITY,vtype=GRB.CONTINUOUS,name="pi_%s_%s_%s_%s_%s"%(l,i,j,t,k))    
+    
+    # variable varrho(14)
+    varpi={}
+    for l in range(N):
+        for i in range(N):
+            #for j in range(M_i_a[l]):
+            for j in range(M_i[i]):
+                for t in range(T_ij[i][j]):
+                    for k in range(K):
+                        varpi[l,i,j,t,k]=m.addVar(lb=0, ub=+GRB.INFINITY,vtype=GRB.CONTINUOUS,name="varpi_%s_%s_%s_%s_%s"%(l,i,j,t,k))    
+    # variable gamma
+    gamma={}
+    for i in range(N):
+        for j in range(M_i[i]):
+            for t in range(T_ij[i][j]):
+                for k in range(K):
+                    gamma[i,j,t,k]=m.addVar(lb=0, ub=+GRB.INFINITY,vtype=GRB.CONTINUOUS,name="gamma_%s_%s_%s_%s"% (i,j,t,k))                    
+    # variable (15)
+    theta={}
+    for i in range(N):
+        for j in range(M_i[i]):
+            for t in range(T_ij[i][j]):
+                for k in range(K):
+                    theta[i,j,t,k]=m.addVar(lb=0, ub=+GRB.INFINITY,vtype=GRB.CONTINUOUS,name="theta_%s_%s_%s_%s"% (i,j,t,k))    
+                    
+    x={}
+    for i in range(N):
+        for j in range(M_i[i]):
+            for t in range(T_ij[i][j]):
+                x[i,j,t]=m.addVar(vtype=GRB.BINARY,name="x_%s_%s_%s"%(i,j,t))
+    
+    fuc1={}
+    for l in range(N):
+        for j in range(M_i_a[l]):
+            for t in range(T_ij_a[l][j]):
+                for k in range(K):
+                    fuc1[l,j,t,k]=m.addVar(lb=-GRB.INFINITY, ub=0,vtype=GRB.CONTINUOUS,name="fuc1_%s_%s_%s_%s"% (l,j,t,k))
+    fuc2={}
+    for l in range(N):
+        for j in range(M_i_a[l],M_i_a[l]+M_i_c[l]):
+            for t in range(T_ij_c[l][j]):
+                for k in range(K):
+                    fuc2[l,j,t,k]=m.addVar(lb=-GRB.INFINITY, ub=0,vtype=GRB.CONTINUOUS,name="fuc2_%s_%s_%s_%s"% (l,j,t,k))    
+        
+    m.update()
+    '''
+        Create Constrain
+    '''
+
+    # constraint 41
+    obj_internal_c41_01=LinExpr()
+    for i in range(N):
+        for j in range(M_i[i]):
+            for t in range(T_ij[i][j]):
+                for k in range(K): 
+                    obj_internal_c41_01.add(alpha[i,j,t,k]*mu_lb[i][j][k]+beta[i,j,t,k]*mu_ub[i][j][k])
+                 
+    obj_internal_c41_02=LinExpr()
+    for i in range(N):
+        for j in range(M_i[i]):
+            for k in range(K):    
+                obj_internal_c41_02.add(epsilon[i][j][k]*lam[i,j,k])
+    
+    obj_internal_c41_03=LinExpr()
+    for k in range(K):       
+        obj_internal_c41_03.add(tau[k])
+        
+        
+    #print( 1-obj_internal_c41_01-obj_internal_c41_02-obj_internal_c41_03-R_0)
+    m.addConstr( 1-obj_internal_c41_01-obj_internal_c41_02-obj_internal_c41_03-R_0,GRB.GREATER_EQUAL,0)            
+         
+            
+    # constraint 42
+    for i in range(N):
+        obj_internal_c42=LinExpr()
+        for j in range(M_i[i]):
+            for t in range(T_ij[i][j]):
+                obj_internal_c42.add(x[i,j,t])
+        #print(L[i]-obj_internal_c42)
+        #print(obj_internal_c42-U[i])
+        m.addConstr(L[i]-obj_internal_c42,GRB.LESS_EQUAL,0  )
+        m.addConstr(obj_internal_c42-U[i] ,GRB.LESS_EQUAL,0 )
+
+    # cosnrain 43
+    for l in range(N):
+        for j in range(M_i_a[l]):
+            for t in range(T_ij_a[l][j]):
+                for k in range(K):
+                    # Here each l,j,t,k are all had number.
+                    
+                    obj_internal_c43=LinExpr()
+                    for n in range(K):
+                        obj_internal_c43.add((mu[n][l][j][t]-mu[k][l][j][t])*2*psi[l,n,k])
+                        #print(obj_internal_c43)
+                    '''
+                    print(fuc1[l,j,t,k]
+                                 + obj_internal_c43
+                                 + phi[l,l,j,t,k]+ varphi[l,l,j,t,k]+pi[l,l,j,t,k]-varpi[l,l,j,t,k]
+                                 -alpha[l,j,t,k]-beta[l,j,t,k] )
+                    '''
+                    m.addConstr(fuc1[l,j,t,k]
+                                 + obj_internal_c43
+                                 + phi[l,l,j,t,k]+ varphi[l,l,j,t,k]+pi[l,l,j,t,k]-varpi[l,l,j,t,k]
+                                 -alpha[l,j,t,k]-beta[l,j,t,k] ,GRB.EQUAL,0 )   
+    # constrain 44
+    for l in range(N):
+        for j in range(M_i_a[l],M_i_a[l]+M_i_c[l]):
+            for t in range(T_ij_c[l][j]):
+                for k in range(K):
+                    # Here each l,j,t,k are all had number.
+                    obj_internal_c44=LinExpr()
+                    for n in range(K):
+                        obj_internal_c44.add((mu[n][l][j][t]-mu[k][l][j][t])*2*psi[l,n,k])
+                    '''
+                    #print(fuc2[l,j,t,k]
+                                 + obj_internal_c44
+                                 + phi[l,l,j,t,k]+ varphi[l,l,j,t,k]+pi[l,l,j,t,k]-varpi[l,l,j,t,k]
+                                 -alpha[l,j,t,k]-beta[l,j,t,k] )
+                    '''
+                    m.addConstr(fuc2[l,j,t,k]
+                                 + obj_internal_c44
+                                 + phi[l,l,j,t,k]+ varphi[l,l,j,t,k]+pi[l,l,j,t,k]-varpi[l,l,j,t,k]
+                                 -alpha[l,j,t,k]-beta[l,j,t,k] ,GRB.EQUAL,0 )    
+ 
+    #constrain (25)    
+    for l in range(N):
+        for k in range(K):
+            
+            internal_obj_0=LinExpr()
+            for i in range(N):
+                for j in range(M_i[i]):
+                    for t in range(T_ij[i][j]):
+                        
+                        internal_obj=LinExpr()
+                        for n in range(K):
+                            internal_obj.add( psi[l,n,k]*(mu[n][i][j][t]*mu[n][i][j][t]-mu[k][i][j][t]*mu[k][i][j][t]))
+                        #print("l,k,i,j,t,n is %s%s%s%s%s%s"%(l,k,i,j,t,n))
+                        #print("internal_obj is %s"%internal_obj)
+                        
+                        internal_obj_0.add(phi[l,i,j,t,k]*z_ij_lb[i][j] 
+                                              +varphi[l,i,j,t,k]*z_ij_ub[i][j]+v_ijk[i][j][k]*(pi[l,i,j,t,k]-varpi[l,i,j,t,k])+internal_obj)
+                        #print("-----------------------------")
+                        #print(internal_obj_0)
+            
+            internal_obj_1=LinExpr()
+            for j_a in range(M_i_a[l]):
+                for t_a in range(T_ij[l][j_a]):
+                    internal_obj_1.add(q_m[l,j_a,t_a,k]*D_L)
+            constr1=internal_obj_0+internal_obj_1+tau[k]-p[k]
+            #print("constrain 25")
+            #print(constr1)
+            m.addConstr(constr1,GRB.GREATER_EQUAL,0)    
+
+            
+    #constrain 26
+    for k in range(K):
+        '''
+        /inside loop start
+        '''
+        obj_internal_2=LinExpr()
+        for i in range(N):
+            for j in range(M_i[i]):
+                for t in range(T_ij[i][j]):
+                    
+                    obj_internal_3=LinExpr()
+                    for n in range(K):
+                        obj_internal_3.add(varsigma[n,k]*(mu[n][i][j][t]*mu[n][i][j][t]-mu[k][i][j][t]*mu[k][i][j][t]))
+                    
+                    obj_internal_2.add(rho[i,j,t,k] *z_ij_lb[i][j]+ varrho[i,j,t,k]*z_ij_ub[i][j]+ v_ijk[i][j][k]*(gamma[i,j,t,k]-theta[i,j,t,k]) +obj_internal_3)
+         
+            m.addConstr( obj_internal_2+tau[k],GRB.GREATER_EQUAL,0 )                                     
+    
+    # constrain:29
+    for l in range(N):
+        for i in range(N):
+            if i!=l:
+                for j in range(M_i[i]):
+                    for t in range(T_ij[i][j]):                 
+                        for k in range(K):
+                            
+                            obj_internal_7=LinExpr()
+                            for n in range(K):
+                                obj_internal_7.add(2*(mu[n][i][j][t]-mu[k][i][j][t])*psi[l,n,k])
+                            '''
+                            #print("----------------")
+                            #print(" l i j t k is %s %s %s %s %s  \n"%(l,i,j,t,k))
+                            
+                            #print(
+                                    obj_internal_7
+                                        +phi[l,i,j,t,k]+varphi[l,i,j,t,k]
+                                        +pi[l,i,j,t,k]-varpi[l,i,j,t,k]
+                                        -alpha[i,j,t,k]-beta[i,j,t,k]
+                                        )
+                            '''
+                            m.addConstr(
+                                        obj_internal_7
+                                        +phi[l,i,j,t,k]+varphi[l,i,j,t,k]
+                                        +pi[l,i,j,t,k]-varpi[l,i,j,t,k]
+                                        -alpha[i,j,t,k]-beta[i,j,t,k],GRB.EQUAL, 0
+                                       )
+    # constrain:30
+    for l in range(N):
+        for i in range(N):
+            for j in range(M_i[i]):
+                for t in range(T_ij[i][j]):
+                    for k in range(K):
+                        '''
+                        print("----------------")
+                        print(" l i j t k is %s %s %s %s %s  \n"%(l,i,j,t,k))
+                       
+                        print(
+                                T_ij[i][j]*sigma[i][j][k]*(pi[l,i,j,t,k]
+                                        +varpi[l,i,j,t,k])-lam[i,j,k]
+                                )
+                         '''
+                        m.addConstr(T_ij[i][j]*sigma[i][j][k]*(pi[l,i,j,t,k]
+                                        +varpi[l,i,j,t,k])-lam[i,j,k],GRB.EQUAL, 0)
+
+    # constrain:31
+    for i in range(N):
+        for j in range(M_i[i]):
+            for t in range(T_ij[i][j]):
+                for k in range(K):
+                    
+                    obj_internal_8=LinExpr()
+                    for n in range(K):
+                         obj_internal_8.add(2*varsigma[n,k]*(mu[n][i][j][t]-mu[k][i][j][t]))
+                    '''
+                    print("----------------")
+                    print("  i j t k is  %s %s %s %s  \n"%(i,j,t,k))
+                    
+                    print(
+                            obj_internal_8
+                                     +rho[i,j,t,k]+varrho[i,j,t,k]+gamma[i,j,t,k]-theta[i,j,t,k]
+                                    -alpha[i,j,t,k]-beta[i,j,t,k]
+                                    )
+                    '''
+                    m.addConstr(  obj_internal_8
+                                     +rho[i,j,t,k]+varrho[i,j,t,k]+gamma[i,j,t,k]-theta[i,j,t,k]
+                                    -alpha[i,j,t,k]-beta[i,j,t,k],GRB.EQUAL,0)
+
+    # constrain:32
+    for i in range(N):
+        for j in range(M_i[i]):
+            for t in range(T_ij[i][j]):
+                for k in range(K):
+                    m.addConstr(T_ij[i][j]*sigma[i][j][k]*(gamma[i,j,t,k]+theta[i,j,t,k])-lam[i,j,k],GRB.EQUAL,0)
+                    '''
+                    print("----------------")
+                    print("  i j t k is  %s %s %s %s  \n"%(i,j,t,k))
+                    '''
+                    #print(T_ij[i][j]*sigma[i][j][k]*(gamma[i,j,t,k]+theta[i,j,t,k])-lam[i,j,k])    
+    
+    
+    # constrain  (46)
+    for l in range(N):
+        for j in range(M_i_a[l]):
+            for t in range(T_ij_a[l][j]):
+                for k in range(K):
+                    #print(q_m[l,j,t,k]-fuc1[l,j,t,k]    )
+                    m.addConstr(q_m[l,j,t,k]-fuc1[l,j,t,k],GRB.LESS_EQUAL,0)
+                    
+    # constrain  (47)
+    for l in range(N):
+        for j in range(M_i_a[l]):
+            for t in range(T_ij_a[l][j]):
+                for k in range(K):                   
+                    m.addConstr(fuc1[l,j,t,k]-M_ssnn*x[l,j,t],GRB.GREATER_EQUAL,0)
+                    
+    # constrain  (48)
+    for l in range(N):
+        for j in range(M_i_a[l]):
+            for t in range(T_ij_a[l][j]):
+                for k in range(K):
+                    
+                    m.addConstr(fuc1[l,j,t,k]-q_m[l,j,t,k]-(x[l,j,t]-1)*M_ssnn ,GRB.LESS_EQUAL,0)    
+    
+    
+    # constrain (49)
+    for l in range(N):
+        for j in range(M_i_a[l],M_i_a[l]+M_i_c[l]):
+            for t in range(T_ij_c[l][j]):
+                for k in range(K):
+                    
+                    obj_internal_9=LinExpr()
+                    for j_a in range(M_i_a[l]):
+                        for t_a in range(T_ij_a[l][j_a]):
+                            obj_internal_9.add(q_m[l,j_a,t_a,k])
+                    #print(obj_internal_9-fuc2[l,j,t,k])       
+                    m.addConstr(obj_internal_9-fuc2[l,j,t,k] ,GRB.LESS_EQUAL,0)
+                    
+                    
+    # constrain (50)
+    for l in range(N):
+        for j in range(M_i_a[l],M_i_a[l]+M_i_c[l]):
+            for t in range(T_ij_c[l][j]):
+                for k in range(K):
+                    
+                    m.addConstr(fuc2[l,j,t,k]-M_ssnn*(x[l,j,t]) ,GRB.GREATER_EQUAL,0)
+                    
+                    
+    # constrain (51)
+    for l in range(N):
+        for j in range(M_i_a[l],M_i_a[l]+M_i_c[l]):
+            for t in range(T_ij_c[l][j]):
+                for k in range(K):
+                    
+                    obj_internal_10=LinExpr()
+                    
+                    for j_a in range(M_i_a[l]):
+                        for t_a in range(T_ij[l][j_a]):
+                            obj_internal_10.add(q_m[l,j_a,t_a,k])
+                    
+                    m.addConstr(fuc2[l,j,t,k]-obj_internal_10-(x[l,j,t]-1)*M_ssnn ,GRB.LESS_EQUAL,0)   
+    
+    '''
+    Create Objection
+    '''
+    obj_internal_cost=LinExpr()
+    for i in range(N):
+        for j in range(M_i[i]):
+
+            obj_internal_x=LinExpr()
+            for t in range(T_ij[i][j]):
+                obj_internal_x.add(x[i,j,t])
+
+            obj_internal_cost.add(obj_internal_x*c[i][j])
+    m.setParam("OutputFlag",0)
+    m.setObjective(obj_internal_cost,sense=GRB.MINIMIZE)
+    
+    m.optimize()
+    
+    if (m.status == GRB.Status.OPTIMAL):
+        objValue = m.objVal  # 最优值
+        solution=m.getAttr('x', x)
+        #print(objValue)
+        #print("%s\n"%solution)
+        '''
+        print variable 
+        for v in m.getVars():
+            print('Variable %s is %s'%(v.varName, v.x))    
+        '''
+    elif (m.status == GRB.Status.INFEASIBLE):
+        #print("Model is infeasible")
+        
+        sys.exit(0)
+    elif (m.status == GRB.Status.UNBOUNDED):
+        #print("Model is unbounded")
+        sys.exit(0)
+    else:
+        #print("Optimization ended with status %d" % m.status)
+        sys.exit(0)
+
+    return (solution,objValue)
+    
