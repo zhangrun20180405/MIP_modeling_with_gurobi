@@ -1,0 +1,43 @@
+# define the Big M
+#M_ssnn= -280
+
+
+#define the number of subsystem in whole system
+N=3
+
+# define the number of component and its type in each sub system
+M_i=(3,3,3,3,3)
+M_i_a=(1,1,1,1,1)
+M_i_c=(2,2,2,2,2)
+
+#define the cost of reduandancy in each type of component
+
+
+# define number of redaundancy ineach component
+T_ij=((3,8,2),(3,8,2),(3,8,2),(3,8,2),(3,8,2))
+T_ij_a=((3,0,0),(3,0,0),(3,0,0),(3,0,0),(3,0,0),)
+T_ij_c=((0,8,2),(0,8,2),(0,8,2),(0,8,2),(0,8,2),)
+# define the upper bound and lower bound for each component
+'''
+z_ij_lb=(
+        (166,166,0),
+)
+
+z_ij_ub=(
+        (3876,3876,4968),
+)
+
+
+'''
+z_ij_lb=(
+        (1,1,0), (1,1,0), (1,1,0), (1,1,0), (1,1,0),
+)
+
+z_ij_ub=(
+        (13876,13876,14968), (13876,13876,14968), (13876,13876,14968), (13876,13876,14968), (13876,13876,14968),
+)
+
+# equal for all item inside
+L=(1,1,1,1,1)
+U=(13,13,13,13,13)
+l=5
